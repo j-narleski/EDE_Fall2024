@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Jaclyn Narleski"
 output: pdf_document
 ---
 
@@ -22,22 +22,22 @@ Enter answers to the questions just below the >Answer: prompt.
 
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
-> Answer: 
+> Answer: During my undergrad, my introduction to statistics course touched upon some R-coding basics, and I also used R for a ecology research project to calculate ANOVA for some raw data I collected. I have only ever used Git for looking at coding examples when I took an introduction to Java course. For data analysis, I think I have the most experience in using GIS for data manipulation and data analytics.
 
 2. Are there any components of the course about which you feel confident?
 
-> Answer: 
+> Answer: Since I have *some* coding experience I feel relatively confident in some of the concepts we'll be covering as we learn R.
 
 3. Are there any components of the course about which you feel apprehensive?
 
-> Answer: 
+> Answer: That being said about my coding experience, I also struggled a lot learning Java and R. I felt that this was partially because it was still during the COVID year(s) and it was assumed we had some coding background already. I appreciate that this course is designed as if no one has any experience at all.
 
 
 ## 2) GitHub
 
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository and that you have updated your course README file, committed those changes, and pushed them to your GitHub account. 
 
-> Answer: 
+> Answer: https://github.com/j-narleski/EDE_Fall2024
 
 ## 3) Knitting
 When you have completed this document, click the `knit` button.This should produce a PDF copy of your markdown document. Submit this PDF to Canvas 

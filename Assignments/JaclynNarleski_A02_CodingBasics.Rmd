@@ -94,15 +94,14 @@ View(studentinfo) # view data frame
 passfail <- function(x) { 
   if (x > 50) {
     print("Pass")
-  } else (x < 50) {
+   } else 
     print("Fail") 
-  }
-}
+} 
 
 #11. Create a function using ifelse()
 
 passfail2 <- function(x) {
-  ifelse(x>50,print("Pass"), x<50, print("Fail"))
+  ifelse(x > 50, "Pass", "Fail")
 }
 
 #12a. Run the first function with the value 52.5
@@ -115,7 +114,7 @@ passfail2(52.5)
 
 #13a. Run the first function with the vector of test scores
 
-passfail(testscores)
+# passfail(testscores) this function does not work!
 
 #13b. Run the second function with the vector of test scores
 
@@ -125,7 +124,7 @@ passfail2(testscores)
 
 14. QUESTION: Which option of `if`...`else` vs. `ifelse` worked? Why? (Hint: search the web for "R vectorization")
 
-> Answer:
+> Answer: Ifelse worked over "if...else" because it's a simpler function that automatically loops through a vector. Given its complexity, "if...else" cannot loop through a vector.
 
 
 **NOTE** Before knitting, you'll need to comment out the call to the function in Q13 that does not work. (A document can't knit if the code it contains causes an error!)

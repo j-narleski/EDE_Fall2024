@@ -161,20 +161,20 @@ ggplot(USGS.flow.data) +
 
 Question: under what circumstances would it be beneficial to use each of these graph types (bar plot, histogram, frequency polygon, box-and whisker, violin, scatterplot)?
 
-> Answer: 
+> Answer: It depends on the type of data you want to display! If you're looking at the count of something a bar plot may be beneficial, or if you're looking at mean/median a box-and-whisker would be better!
 
 ## Ending discussion
 What did you learn about the USGS discharge dataset today? What separate insights did the different graph types offer?
-> Answer: 
+> Answer: These different graphs offered insights about the relationships between the average discharge and gage height.
 
 
 How can multiple options for data exploration inform our understanding of our data?
 
-> Answer: 
+> Answer: Mulitple options for data exploration allow for different manipulations of data that can display different trends that we aren't able to see by just looking at the numbers.
 
 
 Do you see any patterns in the USGS data for the Eno River? What might be responsible for those patterns and/or relationships?
 
-> Answer: 
+> Answer: The main pattern I saw was that the average discharge increased with the gage height of the Eno River. This makes sense as the higher the water height, the more likely to be displaced.
 
 

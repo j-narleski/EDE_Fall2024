@@ -1,6 +1,6 @@
 ---
 title: "Assignment 3: Data Exploration"
-author: "Student Name"
+author: "Jaclyn Narleski"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -33,7 +33,22 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Ex
 1.  Load necessary packages (tidyverse, lubridate, here), check your current working directory and upload two datasets: the ECOTOX neonicotinoid dataset (ECOTOX_Neonicotinoids_Insects_raw.csv) and the Niwot Ridge NEON dataset for litter and woody debris (NEON_NIWO_Litter_massdata_2018-08_raw.csv). Name these datasets "Neonics" and "Litter", respectively. Be sure to include the subcommand to read strings in as factors.
 
 ```{r,  message = FALSE}
+# Load packages
+library(tidyverse)
+library(lubridate)
+library(here)
 
+# Check working directory
+getwd()
+
+# Upload data sets
+Neonics <- read.csv(
+  file = here("Data/Raw/ECOTOX_Neonicotinoids_Insects_raw.csv"), 
+  stringsAsFactors = TRUE)
+
+Litter <- read.csv(
+  file = here("Data/Raw/NEON_NIWO_Litter_massdata_2018-08_raw.csv"), 
+  stringsAsFactors = TRUE)
 
 ```
 
@@ -41,32 +56,39 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Ex
 
 2.  The neonicotinoid dataset was collected from the Environmental Protection Agency's ECOTOX Knowledgebase, a database for ecotoxicology research. Neonicotinoids are a class of insecticides used widely in agriculture. The dataset that has been pulled includes all studies published on insects. Why might we be interested in the ecotoxicology of neonicotinoids on insects? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: Pesticides often pose a threat to the environment, especially when they're overused. Runoff of pesticides into local water sources, like streams, rivers, and lakes, can harm both the toxicology of the water itself and the aquatic organisms that reside in it. Since neonicotinoids are a common pesticide, it's vital we understand their makeup and their impact on organisms.
 
 3.  The Niwot Ridge litter and woody debris dataset was collected from the National Ecological Observatory Network, which collectively includes 81 aquatic and terrestrial sites across 20 ecoclimatic domains. 32 of these sites sample forest litter and woody debris, and we will focus on the Niwot Ridge long-term ecological research (LTER) station in Colorado. Why might we be interested in studying litter and woody debris that falls to the ground in forests? Feel free to do a brief internet search if you feel you need more background information.
 
-> Answer:
+> Answer: Litter and woody debris that falls to the ground in forests plays a key role in the carbon budgeting and nutrient cycling of forest ecosystems. Studying litter/woody debris can be informative on what kinds of nutrients an ecosystem may or may not be receiving, or have an overabundance of. 
 
 4.  How is litter and woody debris sampled as part of the NEON network? Read the NEON_Litterfall_UserGuide.pdf document to learn more. List three pieces of salient information about the sampling methods here:
 
 > Answer: 
- 1.
- 2.
- 3. 
+ 1. Plotting - litter and woody debris was sampled using 40 m x 40 m and 20 m x 20 m tower plots that were randomly selected areas.  
+ 2. Trap placement - ground and elevated traps were used in plots depending on the type of vegetation and debris to be collected. Placement of litter traps was either purposeful or randomized depending on the plot. 
+ 3. Sampling frequency - ground traps were sampled once per year, while elevated traps were sampled more frequently depending on their vegetation type and forest location (deciduous or evergreen).
 
 ## Obtain basic summaries of your data (Neonics)
 
 5.  What are the dimensions of the dataset?
 
 ```{r}
+# View dataset Neonics
+View(Neonics)
+# Data features 4,623 entries/rows and 30 columns
 
-
+# View dataset Litter
+View(Litter)
+# Data feautures 188 entries/rows and 19 columns
 ```
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
 
 ```{r}
 
+summary(Neonics$Effect)
+sort(Neonics$Effect, decreasing = FALSE, na.last = TRUE)
 
 ```
 

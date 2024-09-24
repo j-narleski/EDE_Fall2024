@@ -34,9 +34,9 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Ex
 
 ```{r,  message = FALSE}
 # Load packages
-library(tidyverse)
-library(lubridate)
-library(here)
+# library(tidyverse)
+# library(lubridate)
+# library(here)
 
 # Check working directory
 getwd()
@@ -75,43 +75,47 @@ Litter <- read.csv(
 
 ```{r}
 # View dataset Neonics
-View(Neonics)
+# View(Neonics)
 # Data features 4,623 entries/rows and 30 columns
 
 # View dataset Litter
-View(Litter)
-# Data feautures 188 entries/rows and 19 columns
+# View(Litter)
+# Data features 188 entries/rows and 19 columns
 ```
 
 6.  Using the `summary` function on the "Effect" column, determine the most common effects that are studied. Why might these effects specifically be of interest? [Tip: The `sort()` command is useful for listing the values in order of magnitude...]
 
 ```{r}
-
+# Summary of Neonics "Effects" column
 summary(Neonics$Effect)
-sort(Neonics$Effect, decreasing = FALSE, na.last = TRUE)
 
 ```
 
-> Answer:
-
+> Answer: Based on the dataset, the most common effects of neonics that are studied are population and mortality. These effects could be of particular interest since heightened mortality rates of a species due to a pesticide could be indicative of overuse/danger to a species, and population abundance could also indicate what species(s) have decreased due to environmental or epidemiological changes. 
 
 7.  Using the `summary` function, determine the six most commonly studied species in the dataset (common name). What do these species have in common, and why might they be of interest over other insects? Feel free to do a brief internet search for more information if needed.[TIP: Explore the help on the `summary()` function, in particular the `maxsum` argument...]
 
 ```{r}
+# Help function to see how summary() works
+# help("summary")
 
+# Summary to see the six most commonly studied species using the maxsum argument
+summary(Neonics$Species.Common.Name, maxsum = 7)
 
 ```
 
-> Answer:
+> Answer: The six most commonly studied species in this dataset are the Honey Bee, Parasitic Wasp, the Buff-Tailed Bumblebee, Carniolan Honey Bee, the Bumble Bee, and the Italian Honeybee. These species are all pollinators (the wasp less so), which would be of interest over other insects since they are helpful for keeping crop and flower populations healthy and alive.
 
 8.  Concentrations are always a numeric value. What is the class of `Conc.1..Author.` column in the dataset, and why is it not numeric? [Tip: Viewing the dataframe may be helpful...]
 
 ```{r}
+# View dataframe Neonics
 
+# View(Neonics)
 
 ```
 
-> Answer:
+> Answer: The values in Conc.1..Author are factors. They're likely not numeric because different concentrations have different categories associated with them and therefore need to be sorted that way rather than numerically. 
 
 ## Explore your data graphically (Neonics)
 
@@ -119,6 +123,12 @@ sort(Neonics$Effect, decreasing = FALSE, na.last = TRUE)
 
 ```{r}
 
+# Check to see function of geom_freqpoly()
+# help("geom_freqpoly")
+
+# Generate plot of the number of studies conducted by publication year
+ggplot(Neonics) + 
+  geom_freqpoly(aes(x = Publication.Year), bins = 37) # 37  years total
 
 ```
 
@@ -126,12 +136,16 @@ sort(Neonics$Effect, decreasing = FALSE, na.last = TRUE)
 
 ```{r}
 
+# Generate plot of the number of studies conducted by publication year and
+# different colors designate different test locations
+ggplot(Neonics) + 
+  geom_freqpoly(aes(x = Publication.Year, color = Test.Location), bins = 37)
 
 ```
 
 Interpret this graph. What are the most common test locations, and do they differ over time?
 
-> Answer:
+> Answer: The most common test locations are the lab and the natural field. The lab test locations definitely increase over time while the natural field decreases.
 
 11. Create a bar graph of Endpoint counts. What are the two most common end points, and how are they defined? Consult the ECOTOX_CodeAppendix for more information. 
 
@@ -139,10 +153,14 @@ Interpret this graph. What are the most common test locations, and do they diffe
 
 ```{r}
 
+# Generate bar graph of endpoint counts
+ggplot(data = Neonics, aes(x = Endpoint)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ```
 
-> Answer:
+> Answer: The two most common endpoints are NOEL and LOEL. LOEL stands for lowest-observable-effect-level, or the lowest dose/concentration reported to produced signifcant effects. NOEL stands for no-observable-effect-level, or the highest dose/concentration reported that produced no significant effects. Both of these are terrestrial endpoints.
 
 ## Explore your data (Litter)
 
@@ -150,6 +168,20 @@ Interpret this graph. What are the most common test locations, and do they diffe
 
 ```{r}
 
+# Determine class of collectDate
+class(Litter$collectDate)
+
+# Convert class of factors collectDate to characters
+date_char <- as.character(Litter$collectDate)
+
+# Convert class of characters date_char to dates
+litterdate <- as.Date(date_char)
+
+# Check class
+class(litterdate)
+
+# Check dates that were sampled in 2018
+unique(litterdate)
 
 ```
 
@@ -157,15 +189,21 @@ Interpret this graph. What are the most common test locations, and do they diffe
 
 ```{r}
 
+# Use unique() function to determine amount of different plots sampled at Niwot
+# Ridge
+unique(Litter$namedLocation)
 
 ```
 
-> Answer:
+> Answer: 12 different plots were sampled at Niwot Ridge. The unique() function assesses data in levels versus the summary function that performs a count. 
 
 14. Create a bar graph of functionalGroup counts. This shows you what type of litter is collected at the Niwot Ridge sites. Notice that litter types are fairly equally distributed across the Niwot Ridge sites.
 
 ```{r}
 
+# Create a bar graph of functionalGroup counts
+ggplot(data = Litter, aes(x = functionalGroup)) +
+  geom_bar()
 
 ```
 
@@ -173,13 +211,20 @@ Interpret this graph. What are the most common test locations, and do they diffe
 
 ```{r}
 
+# Create a boxplot of dryMass by functionalGroup
+ggplot(Litter) +
+  geom_boxplot(aes(x = dryMass, y = functionalGroup))
+
+# Create a violin plot of dryMass by funtionalGroup
+ggplot(Litter) +
+  geom_violin(aes(x = dryMass, y = functionalGroup))
 
 ```
 
 Why is the boxplot a more effective visualization option than the violin plot in this case?
 
-> Answer:
+> Answer: The boxplot is a more effective visualization because it displays the mean, median, and Q1/Q3 values, as well as outliers. This allows us to see which functional group actually had the greatest density of dry mass, while the violin plot is skewed due to outliers.
 
 What type(s) of litter tend to have the highest biomass at these sites?
 
-> Answer:
+> Answer: Needles, mixed litter, and twigs/branches

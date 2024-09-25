@@ -19,7 +19,7 @@ Today we will work with a dataset from the [North Temperate Lakes Long-Term Ecol
 
 Opening discussion: why might we be interested in long-term observations of temperature, oxygen, and light in lakes?
 
-> Add notes here: 
+> Add notes here: We might be interested in long-term observations of temperature, oxygen, and light in lakes because these can be indicative of long-term environmental health changes to the lake, especially if there's evidence of eutriphocation or runoff.
 
 ```{r setup workspace, message = FALSE}
 getwd()
@@ -63,14 +63,14 @@ vignette("dplyr")
 Filtering allows us to choose certain rows (observations) in our dataset.
 
 Here are the relevant commands used in the `filter` function. Add some notes to designate what these commands mean. 
-`==`
-`!=`
-`<`
-`<=`
-`>`
-`>=`
-`&`
-`|`
+`==` returns TRUE if two values are equal
+`!=` returns TRUE if two values are not equal
+`<` returns TRUE if value is less than other value
+`<=` returns TRUE if value is less than or equal to other value
+`>` returns TRUE if value is greater than other value
+`>=` returns TRUE if value is greater than or equal to other value
+`&` checks multiple conditions
+`|` checks if one or both are TRUE
 
 ```{r filtering data}
 class(NTL.phys.data$lakeid)
@@ -111,15 +111,18 @@ NTL.phys.data.JunethruOctober4 <- filter(NTL.phys.data, daynum %in% c(152:304))
 # filter NTL.phys.data for the year 1999
 # what code do you need to use, based on the class of the variable?
 class(NTL.phys.data$year4)
+NTL.phys.data.1999 <- filter(NTL.phys.data, year4 == 1999)
 
 # Exercise: 
 # filter NTL.phys.data for Tuesday Lake from 1990 through 1999.
-
+NTL.phys.data.TuesdayLake.1990to1994 <- filter(
+  NTL.phys.data, lakename == "Tuesday Lake" | 
+    year4 >= 1990 & year4 <= 1994)
 
 ```
 Question: Why don't we filter using row numbers?
 
-> Answer: 
+> Answer: We don't filter using row numbers since this may hide certain points of data we need
 
 ### Arrange
 
@@ -132,6 +135,8 @@ NTL.phys.data.depth.descending <- arrange(NTL.phys.data, desc(depth))
 # Exercise: 
 # Arrange NTL.phys.data by temperature, in descending order. 
 # Which dates, lakes, and depths have the highest temperatures?
+
+NTL.phys.data.temp.descending <- arrange(NTL.phys.data, desc(temperature_C))
 
 
 ```
@@ -196,4 +201,5 @@ write.csv(NTL.phys.data.PeterPaul1, row.names = FALSE, file = "./Data/Processed/
 
 When we wrangle a raw dataset into a processed dataset, we create a code file that contains only the wrangling code. We then save the processed dataset as a new spreadsheet and then create a separate code file to analyze and visualize the dataset. Why do we keep the wrangling code separate from the analysis code?
 
+It's important to separate the wrangling code and the analysis code in order to go back and see the raw data we worked with and what we changed before performing analysis
 

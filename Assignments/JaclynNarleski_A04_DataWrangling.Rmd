@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling (Fall 2024)"
-author: "Student Name"
+author: "Jaclyn Narleski"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -30,18 +30,45 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Wr
 2. Add the appropriate code to reveal the dimensions of the four datasets. 
 
 ```{r setup, message = FALSE}
-#1a 
+#1a
+# install packages
+library(tidyverse)
+library(lubridate)
+library(here)
 
 #1b 
+# check working directory
+getwd()
+here() 
 
 #1c 
+# read data files
+EPA.Air.O3.2018 <- read.csv(here("./Data/Raw/EPAair_O3_NC2018_raw.csv"),
+                        stringsAsFactors = TRUE)
+EPA.Air.O3.2019 <- read.csv(here("./Data/Raw/EPAair_O3_NC2019_raw.csv"),
+                            stringsAsFactors = TRUE)
+EPA.Air.PM25.2018 <- read.csv(here("./Data/Raw/EPAair_PM25_NC2018_raw.csv"),
+                              stringsAsFactors = TRUE)
+EPA.Air.PM25.2019 <- read.csv(here("./Data/Raw/EPAair_PM25_NC2019_raw.csv"),
+                              stringsAsFactors = TRUE)
 
 #2 
+nrow(EPA.Air.O3.2018) #9737 rows
+ncol(EPA.Air.O3.2018) #20 cols
 
+nrow(EPA.Air.O3.2019) #10592 rows
+ncol(EPA.Air.O3.2019) #20 cols
+
+nrow(EPA.Air.PM25.2018) #8983 rows
+ncol(EPA.Air.PM25.2018) #20 cols
+
+nrow(EPA.Air.PM25.2019) #8581 rows
+ncol(EPA.Air.PM25.2019) #20 cols
 
 ```
 
 >All four datasets should have the same number of columns but unique record counts (rows). Do your datasets follow this pattern?
+Yes!
 
 
 ## Wrangle individual datasets to create processed files.
@@ -57,12 +84,46 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Wr
 ```{r questions 3 thru 4}
 #3
 
+# Use mdy() to change date factors to date objects in each dataset
+
+EPA.Air.O3.2018$Date <- mdy(EPA.Air.O3.2018$Date)
+
+EPA.Air.O3.2019$Date <- mdy(EPA.Air.O3.2019$Date)
+
+EPA.Air.PM25.2018$Date <- mdy(EPA.Air.PM25.2018$Date)
+
+EPA.Air.PM25.2019$Date <- mdy(EPA.Air.PM25.2019$Date)
 
 #4
 
+# Use select() to select Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC,
+# COUNTY, SITE_LATITUDE, SITE_LONGITUDE columns
+
+O3.2018.processed <- 
+  select(EPA.Air.O3.2018, Date, DAILY_AQI_VALUE, Site.Name, 
+         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+O3.2019.processed <- 
+  select(EPA.Air.O3.2019, Date, DAILY_AQI_VALUE, Site.Name, 
+         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+PM25.2018.processed <- 
+  select(EPA.Air.PM25.2018, Date, DAILY_AQI_VALUE, Site.Name, 
+         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+
+PM25.2019.processed <- 
+  select(EPA.Air.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, 
+         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #5
 
+# Use mutate() to add "PM2.5" to AQS_PARAMETER_DESC
+
+PM25.2018.processed %>%
+  mutate(AQS_PARAMETER_DESC = "PM2.5")
+
+PM25.2019.processed %>%
+  mutate(AQS_PARAMETER_DESC = "PM2.5")
 
 #6
 

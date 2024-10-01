@@ -170,34 +170,40 @@ Combined.AQ.Data <- rbind(O3.2018.processed, O3.2019.processed,
 
 #8 
 
-Combined.AQ.Data.processed <-
-  filter(Combined.AQ.Data, Site.Name == "Linville Falls" | 
-           Site.Name == "Durham Armory" | Site.Name == "Leggett" |
-           Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" |  
-           Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" 
-         | Site.Name == "West Johnston Co." | Site.Name == 
-           "Garinger High School" | Site.Name == "Castle Hayne" | 
-           Site.Name == "Pitt Agri. Center" |Site.Name == "Bryson City" | 
-           Site.Name == "Millbrook School") %>%
-  Combined.AQ.Data.processed$month <- month(Combined.AQ.Data.processed$Date)
-  Combined.AQ.Data.processed$year <- year(Combined.AQ.Data.processed$Date) %>%
+Combined.AQ.Data.processed <- Combined.AQ.Data %>%
+  # Filter data set by chosen sites
+  filter(Site.Name %in% c("Linville Falls","Durham Armory","Leggett",
+                          "Hattie Avenue","Clemmons Middle","Mendenhall School",
+                          "Frying Pan Mountain","West Johnston Co.",
+                          "Garinger High School","Castle Hayne",
+                          "Pitt Agri. Center","Bryson City","Millbrook School")
+         ) %>%
+  # separate month/year from date and create new month/years columns
+  mutate(month = month(Date), year = year(Date)) %>%
+  # group date, site, aqs, and county and calculate mean for aqi, lat, and long
   daily.means <- Combined.AQ.Data.processed %>%
-    group_by(month, year, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+    group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
     summarise(meanAQI = mean(DAILY_AQI_VALUE, na.rm = TRUE),
               meanLAT = mean(SITE_LATITUDE, na.rm = TRUE),
               meanLONG = mean(SITE_LONGITUDE, na.rm = TRUE)) %>%
-    ungroup()
- 
-  
+  # ungroup for further analysis
+  ungroup()
 
-#9
+EPAair_O3_PM25_NC1819_Processed <- merge(Combined.AQ.Data.processed, 
+                                           daily.means)
+ #9
 
+mutate(EPAair_O3_PM25_NC1819_Processed, ozone = meanAQI)
 
 #10
-
+nrows(EPAair_O3_PM25_NC1819_Processed)
+ncols(EPAair_O3_PM25_NC1819_Processed)
 
 #11
 
+write.csv(EPAair_O3_PM25_NC1819_Processed, 
+          file = 
+            "~/EDE_Fall2024/Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
 
 ```
 

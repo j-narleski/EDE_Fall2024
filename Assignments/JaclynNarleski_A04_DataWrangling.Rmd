@@ -94,7 +94,7 @@ EPA.Air.PM25.2018$Date <- mdy(EPA.Air.PM25.2018$Date)
 
 EPA.Air.PM25.2019$Date <- mdy(EPA.Air.PM25.2019$Date)
 
-#4
+#4 & #5
 
 # Use select() to select Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC,
 # COUNTY, SITE_LATITUDE, SITE_LONGITUDE columns
@@ -109,23 +109,26 @@ O3.2019.processed <-
 
 PM25.2018.processed <- 
   select(EPA.Air.PM25.2018, Date, DAILY_AQI_VALUE, Site.Name, 
-         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
+         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>%
+  mutate(AQS_PARAMETER_DESC = "PM2.5") # populate AQS column with PM2.5
 
 PM25.2019.processed <- 
   select(EPA.Air.PM25.2019, Date, DAILY_AQI_VALUE, Site.Name, 
-         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
-
-#5
-
-# Use mutate() to add "PM2.5" to AQS_PARAMETER_DESC
-
-PM25.2018.processed %>%
-  mutate(AQS_PARAMETER_DESC = "PM2.5")
-
-PM25.2019.processed %>%
-  mutate(AQS_PARAMETER_DESC = "PM2.5")
+         AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>%
+  mutate(AQS_PARAMETER_DESC = "PM2.5") # populate AQS column with PM2.5
 
 #6
+
+# Save csv files to Processed data folder
+
+write.csv(O3.2018.processed, 
+          file = "~/EDE_Fall2024/Data/Processed/O3.2018.processed.csv")
+write.csv(O3.2019.processed, 
+          file = "~/EDE_Fall2024/Data/Processed/O3.2019.processed.csv")
+write.csv(PM25.2018.processed, 
+          file = "~/EDE_Fall2024/Data/Processed/PM25.2018.processed.csv")
+write.csv(PM25.2019.processed, 
+          file = "~/EDE_Fall2024/Data/Processed/PM25.2019.processed.csv")
 
 ```
 
@@ -160,9 +163,26 @@ PM25.2019.processed %>%
 ```{r questions 7 thru 11}
 #7 
 
+# Combine all four processed datasets using rbind()
+
+Combined.AQ.Data <- rbind(O3.2018.processed, O3.2019.processed, 
+      PM25.2018.processed, PM25.2019.processed)
 
 #8 
 
+Combined.AQ.Data.processed <-
+  filter(Combined.AQ.Data, Site.Name == "Linville Falls" | 
+           Site.Name == "Durham Armory" | Site.Name == "Leggett" |
+           Site.Name == "Hattie Avenue" | Site.Name == "Clemmons Middle" |  
+           Site.Name == "Mendenhall School" | Site.Name == "Frying Pan Mountain" 
+         | Site.Name == "West Johnston Co." | Site.Name == 
+           "Garinger High School" | Site.Name == "Castle Hayne" | 
+           Site.Name == "Pitt Agri. Center" |Site.Name == "Bryson City" | 
+           Site.Name == "Millbrook School") %>%
+  group_by(Combined.AQ.Data$Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
+  summarize(meanAQI = mean(DAILY_AQI_Value),
+            meanlat = mean(SITE_LATITUDE))
+  
 
 #9
 

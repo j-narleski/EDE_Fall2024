@@ -181,26 +181,13 @@ Combined.AQ.Data.processed <-
            Site.Name == "Millbrook School") %>%
   Combined.AQ.Data.processed$month <- month(Combined.AQ.Data.processed$Date)
   Combined.AQ.Data.processed$year <- year(Combined.AQ.Data.processed$Date) %>%
-  daily.mean.by.date <- Combined.AQ.Data.processed %>%
-    group_by(month, year) %>%
+  daily.means <- Combined.AQ.Data.processed %>%
+    group_by(month, year, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
     summarise(meanAQI = mean(DAILY_AQI_VALUE, na.rm = TRUE),
               meanLAT = mean(SITE_LATITUDE, na.rm = TRUE),
               meanLONG = mean(SITE_LONGITUDE, na.rm = TRUE)) %>%
-  daily.mean.by.site <- Combined.AQ.Data.processed %>%
-    group_by(Site.Name) %>%
-    summarise(meanAQI = mean(DAILY_AQI_VALUE, na.rm = TRUE),
-              meanLAT = mean(SITE_LATITUDE, na.rm = TRUE),
-              meanLONG = mean(SITE_LONGITUDE, na.rm = TRUE)) %>%
-  daily.mean.by.aqs <- Combined.AQ.Data.processed %>%
-    group_by(AQS_PARAMETER_DESC) %>%
-    summarise(meanAQI = mean(DAILY_AQI_VALUE, na.rm = TRUE),
-              meanLAT = mean(SITE_LATITUDE, na.rm = TRUE),
-              meanLONG = mean(SITE_LONGITUDE, na.rm = TRUE)) %>%
-  daily.mean.by.county <- Combined.AQ.Data.processed %>%
-    group_by(COUNTY) %>%
-    summarise(meanAQI = mean(DAILY_AQI_VALUE, na.rm = TRUE),
-              meanLAT = mean(SITE_LATITUDE, na.rm = TRUE),
-              meanLONG = mean(SITE_LONGITUDE, na.rm = TRUE))
+    ungroup()
+ 
   
 
 #9

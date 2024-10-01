@@ -178,22 +178,20 @@ Combined.AQ.Data.processed <- Combined.AQ.Data %>%
                           "Garinger High School","Castle Hayne",
                           "Pitt Agri. Center","Bryson City","Millbrook School")
          ) %>%
-  # separate month/year from date and create new month/years columns
-  mutate(month = month(Date), year = year(Date)) %>%
   # group date, site, aqs, and county and calculate mean for aqi, lat, and long
-  daily.means <- Combined.AQ.Data.processed %>%
     group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>%
-    summarise(meanAQI = mean(DAILY_AQI_VALUE, na.rm = TRUE),
-              meanLAT = mean(SITE_LATITUDE, na.rm = TRUE),
-              meanLONG = mean(SITE_LONGITUDE, na.rm = TRUE)) %>%
+    summarize(meanAQI = mean(DAILY_AQI_VALUE),
+              meanLAT = mean(SITE_LATITUDE),
+              meanLONG = mean(SITE_LONGITUDE)) %>%
   # ungroup for further analysis
-  ungroup()
+  ungroup() %>%
+    # separate month/year from date and create new month/years columns
+mutate(month = month(Date), 
+         year = year(Date))
 
-EPAair_O3_PM25_NC1819_Processed <- merge(Combined.AQ.Data.processed, 
-                                           daily.means)
  #9
 
-mutate(EPAair_O3_PM25_NC1819_Processed, ozone = meanAQI)
+pivot_wider(Combined.AQ.Data.processed)
 
 #10
 nrows(EPAair_O3_PM25_NC1819_Processed)

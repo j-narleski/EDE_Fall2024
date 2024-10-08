@@ -170,6 +170,13 @@ peterpaul.tn <- PeterPaul.Processed %>%
   ylab("Total\nNitrogen")
 
 peterpaul.tn
+
+combined.peterpaul.box <- plot_grid(
+  peterpaul.temp, peterpaul.tn, peterpaul.tp) 
+#  axis.title.x = element_blank() +
+#  legend.position = "none"
+
+combined.peterpaul.box
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 

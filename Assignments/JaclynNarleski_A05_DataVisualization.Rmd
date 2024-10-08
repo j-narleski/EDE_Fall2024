@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Jaclyn Narleski"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -33,7 +33,34 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 ```{r initialize project}
 #1 
 
+# load packages
+library(tidyverse)
+library(lubridate)
+library(here)
+library(cowplot)
+
+# verify directory
+here()
+
+# read csv files
+PeterPaul.Processed <- read.csv(here(
+"./Data/Processed_KEY/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv")
+)
+
+NiwotRidge.Processed <- read.csv(here(
+  "./Data/Processed_KEY/NEON_NIWO_Litter_mass_trap_Processed.csv"))
+
 #2 
+
+# change dates to date format
+PeterPaul.Processed$sampledate <-
+  as.Date(as.character(PeterPaul.Processed$sampledate))
+NiwotRidge.Processed$collectDate <-
+  as.Date(NiwotRidge.Processed$collectDate)
+
+# check
+class(PeterPaul.Processed$sampledate)
+class(NiwotRidge.Processed$collectDate)
 
 ```
 ## Define your theme
@@ -47,6 +74,17 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 ```{r build plot theme}
 #3
 
+plot.theme <- theme(
+  plot.title = element_text(hjust = 0.5, size = 12, 
+                            color = "darkgreen", face = "bold"),
+  axis.title.x = element_text(size = 10, color = "darkgreen"),
+  axis.title.y = element_text(size = 10, color = "darkgreen"),
+  legend.title = element_text(size = 10, color = "darkgreen"),
+  plot.background = element_rect(color = "lightgray")
+)
+
+theme_set(plot.theme)
+
 ```
 
 ## Create graphs
@@ -56,6 +94,21 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r plot total P vs PO4}
 #4 
+
+phosphorous.phosphate <- PeterPaul.Processed %>%
+  ggplot(aes(
+    x=po4,
+    y=tp_ug)
+    ) +
+  geom_point() +
+  facet_wrap(facets = vars(lakename), nrow = 2) +
+  geom_smooth(method = "lm", color = "yellowgreen") +
+  xlim(0,45) +
+  ggtitle("Phosphorous to Phosphate Ratios\nin Peter & Paul Lakes") +
+  ylab("Total\nPhosphorous") +
+  xlab("Phosphate")
+
+phosphorous.phosphate
 
 ```
 
@@ -71,6 +124,52 @@ Tips:
 ```{r Create boxplots}
 #5 
 
+PeterPaul.Processed$month <- factor(PeterPaul.Processed$month,
+           levels = 1:12,
+           labels = month.abb)
+
+peterpaul.temp <- PeterPaul.Processed %>%
+  ggplot(aes(
+    x=month,
+    y=temperature_C,
+    color=lakename)
+    ) +
+  geom_boxplot() +
+  ggtitle("Lake Temperatures by Month") +
+  labs(color = "Lake") +
+  xlab("Month") +
+  ylab("Temperature [C]")
+    
+
+peterpaul.temp
+
+peterpaul.tp <- PeterPaul.Processed %>%
+  ggplot(aes(
+    x=month,
+    y=tp_ug,
+    color=lakename)
+    ) +
+  geom_boxplot() +
+  ggtitle("Total Phosphorous by Month") +
+  labs(color = "Lake") +
+  xlab("Month") +
+  ylab("Total\nPhosphorous")
+
+peterpaul.tp
+
+peterpaul.tn <- PeterPaul.Processed %>%
+  ggplot(aes(
+    x=month,
+    y=tn_ug,
+    color=lakename)
+    ) +
+  geom_boxplot() +
+  ggtitle("Total Nitrogen by Month") +
+  labs(color = "Lake") +
+  xlab("Month") +
+  ylab("Total\nNitrogen")
+
+peterpaul.tn
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 

@@ -45,7 +45,7 @@ Table: EPA Air Quality
 
 Set the following R code chunk so that it runs when knit, but no messages, errors, or any output is shown. The code itself, however, should be displayed.
 
-```{r project.setup, message = FALSE, warning = FALSE, include = FALSE}
+```{r project.setup, message=FALSE, warning=FALSE}
 #Import libraries
 library(tidyverse)
 library(lubridate)
@@ -78,7 +78,7 @@ Customize the chunk options such that the code is run but is not displayed in th
 > -   If your output table spans across two pages, try inserting a page break in the markdown just before your code chunk.
 
 
-```{r data.summary}
+```{r data.summary, echo=FALSE}
 #Compute mean PM2.5 concentration for each county, sorted by value
 summary_PM25 <- epa_data %>% 
   drop_na(PM2.5) %>% 
@@ -98,12 +98,14 @@ summary_Ozone <- epa_data %>%
 
 knitr::kable(summary_PM25, 
              caption = "Mean Particulates (2.5 mm)",
-             col.names = "Counties", "$\\mu g/m^3$")
+             col.names = c("Counties", "$\\mu g/m^3$"))
              
-
+             
 knitr::kable(summary_Ozone,
              caption = "Mean Ozone",
-             col.names = "Counties", "$\\mu g/m^3$")
+             col.names = c("Counties", "$\\mu g/m^3$"),
+             round)
+          
 
 ```
 
@@ -113,6 +115,29 @@ knitr::kable(summary_Ozone,
 
 Below this paragraph, but above the horizonal line (`---`), create two separate code chunks that create boxplots of the distribution of Ozone levels by month using, one for only records collected in 2018 and one for records in 2019. Customize the chunk options such that the final figures are displayed but not the code used to generate the figures. In addition, align the plots on the left side of the page and set the figure heights so both plots fit on the same page with minimal space remaining. Lastly, add a `fig.cap` chunk option to add a caption (title) to your plot that will display underneath the figure.
 
+```{r Ozone.2018, echo=FALSE, fig.align='left', fig.width=3, fig.height=5, fig.cap='Ozone Levels by Month of Year 2018'}
+
+Ozone.2018 <- epa_data %>%
+  filter(Year == 2018) %>%
+  ggplot(aes(
+    x = Month,
+    y = Ozone)
+    ) + 
+  geom_boxplot()
+
+```
+
+```{r, Ozone.2019, echo=FALSE, fig.align='left', fig.width=3, fig.height=5,fig.cap='Ozone Levels by Month of Year 2019'}
+
+Ozone.2019 <- epa_data %>%
+  filter(Year == 2019) %>%
+  ggplot(aes(
+    x = Month,
+    y = Ozone)
+    ) + 
+  geom_boxplot()
+
+```
 
 ---
 

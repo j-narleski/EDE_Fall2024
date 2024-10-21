@@ -24,7 +24,7 @@ toc: true
 6.  When you have completed the assignment, **Knit** the text and code into a single PDF file.
 7.  **Be sure that you also commit and push your final Rmd document to your GitHub account**.
 
-## Task 1 - Basic Markdown
+## Task 1: Basic Markdown
 
 Using markdown, create a 2-column table beneath the `Table: EPA Air Quality` line below that summarizes the metadata of the EPA Air Quality data.
 
@@ -42,7 +42,7 @@ Table: EPA Air Quality
 |Date|2018-2019|
 |Source|EPA Air Quality System (AQS)|
 
-## Task 2 - Import packages and data, suppressing messages
+## Task 2: Import packages and data, suppressing messages
 
 Set the following R code chunk so that it runs when knit, but no messages, errors, or any output is shown. The code itself, however, should be displayed.
 
@@ -112,8 +112,10 @@ Below this paragraph, but above the horizonal line (`---`), create two separate 
 
 ```{r Ozone.2018, echo=FALSE, warning=FALSE, fig.align='center', fig.width=7, fig.height=4, fig.cap='Ozone Levels by Month of Year 2018'}
 
+# Change "Month" to factor with abbreviation labels
 epa_data$Month <- factor(epa_data$Month, levels = 1:12, labels = month.abb)
 
+# Generate boxplot for ozone concentrations during 2018
 Ozone.2018 <- epa_data %>%
   filter(Year == 2018) %>%
   ggplot(aes(
@@ -123,14 +125,16 @@ Ozone.2018 <- epa_data %>%
   geom_boxplot() +
   ggtitle("Monthly Ozone Concentrations (2018)") +
   theme(plot.title = element_text(hjust = 0)) +
-  ylab("Concentration (µg/m^3)")
+  ylab("Concentration (µg/m3)")
 
+# View plot
 Ozone.2018
 
 ```
 
 ```{r, Ozone.2019, echo=FALSE, warning=FALSE, fig.align='center', fig.width=7, fig.height=4,fig.cap='Ozone Levels by Month of Year 2019'}
 
+# Generate boxplot of ozone concentrations for 2019
 Ozone.2019 <- epa_data %>%
   filter(Year == 2019) %>%
   ggplot(aes(
@@ -140,8 +144,9 @@ Ozone.2019 <- epa_data %>%
   geom_boxplot() +
   ggtitle("Monthly Ozone Concentrations (2019)") +
   theme(plot.title = element_text(hjust = 0)) +
-  ylab("Concentration (µg/m^3)")
+  ylab("Concentration (µg/m3)")
 
+# View boxplot
 Ozone.2019
 ```
 
@@ -154,3 +159,4 @@ Ozone.2019
 Add a table of contents and list of figures to your document and knit to a PDF. Submit your PDF to Sakai, but also be sure to commit and push your Rmd file used to create this knit document to GitHub. In the section below, add a link to your GitHub repository.
 
 ## Git Repository
+https://github.com/j-narleski/EDE_Fall2024

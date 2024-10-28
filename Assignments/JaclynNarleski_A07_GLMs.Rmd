@@ -1,6 +1,6 @@
 ---
 title: "Assignment 7: GLMs (Linear Regressios, ANOVA, & t-tests)"
-author: "Student Name"
+author: "Jaclyn Narleski"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -28,6 +28,17 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 ```{r setup2}
 #1
 
+library(tidyverse)
+library(agricolae)
+library(lubridate)
+library(here)
+here()
+
+LTER.Lake <-
+  read.csv(here(
+    "~/EDE_Fall2024/Data/Raw/NTL-LTER_Lake_ChemistryPhysics_Raw.csv"))
+
+LTER.Lake$sampledate <- as.Date(LTER.Lake$sampledate, format = "%m/%d/%Y")
 
 #2
 

@@ -69,7 +69,7 @@ Our first research question is: Does mean lake temperature recorded during July 
 3. State the null and alternative hypotheses for this question:
 > Answer:
 H0: The mean lake temperature during July does not change with depth across all lakes.
-Ha: The mean lake temperature during July does change with depth across all lakes.
+Ha: The mean lake temperature during July lowers with deeper depth.
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -94,9 +94,12 @@ Julytemp.by.depth <- LTER.Lake.July %>%
     x = temperature_C,
     y = depth
   )) +
-  geom_point(color = "violetred4") +
+  geom_point(color = "violetred4", size = 1, alpha = 0.75) +
+  geom_smooth(method = "lm", color = "gold3", size = 1.2) +
   xlab("Temperature [C]") +
-  ylab("Depth") +
+  scale_x_continuous(limits = c(0,35), expand = expansion(c(0.05,0.05))) +
+  ylab("Depth (m)") +
+  scale_y_continuous(limits = c(0,NA), expand = expansion(c(0.05, 0.05))) +
   ggtitle("July Temperatures by Lake Depth")
 
 Julytemp.by.depth
@@ -106,7 +109,7 @@ Julytemp.by.depth
 
 6. Interpret the figure. What does it suggest with regards to the response of temperature to depth? Do the distribution of points suggest about anything about the linearity of this trend?
 
-> Answer: 
+> Answer: The figure suggest that deeper lake depths have lower temperatures, especially when the the lake depth is below 5 meters. The distribution of the points suggests that temperatures remain more stable and warmer above 5 meters, but could possibly vary by lake since surface temperatures seem to vary between 15 C to 28 C.
 
 
 7. Perform a linear regression to test the relationship and display the results.

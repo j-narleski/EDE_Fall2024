@@ -42,6 +42,24 @@ LTER.Lake$sampledate <- as.Date(LTER.Lake$sampledate, format = "%m/%d/%Y")
 
 #2
 
+rosetheme <- theme(
+  panel.background = element_rect(fill = "thistle1"),
+  panel.border = element_rect(color = "violetred4", fill = NA, linetype = 1),
+  plot.title = element_text(
+    hjust = 0.5, size = 12, color = "violetred4", 
+    face = "bold", family = "Lato"),
+  axis.title = element_text(size = 10, color = "violetred4", family = "Lato"),
+  panel.grid.major = element_line(
+    color = "violetred4", linetype = 2, size = 0.25),
+  panel.grid.minor = element_line(
+    color = "violetred3", linetype = 3, size = 0.25),
+  axis.text = element_text(color = "violetred4", family = "Lato"),
+  axis.ticks = element_line(color = "violetred4"),
+  legend.title = element_text(size = 8, color = "violetred4", family = "Lato"),
+  legend.position = "right"
+)
+
+theme_set(rosetheme)
 
 ```
 
@@ -50,8 +68,8 @@ Our first research question is: Does mean lake temperature recorded during July 
 
 3. State the null and alternative hypotheses for this question:
 > Answer:
-H0: 
-Ha: 
+H0: The mean lake temperature during July does not change with depth across all lakes.
+Ha: The mean lake temperature during July does change with depth across all lakes.
 
 
 4.  Wrangle your NTL-LTER dataset with a pipe function so that the records meet the following criteria: 
@@ -64,9 +82,24 @@ Ha:
 ```{r scatterplot}
 #4
 
+LTER.Lake.July <- LTER.Lake %>%
+  filter(month(sampledate) == 7) %>%
+  select(sampledate,lakename, year4, daynum, depth, temperature_C) %>%
+  na.omit()
 
 #5
 
+Julytemp.by.depth <- LTER.Lake.July %>%
+  ggplot(aes(
+    x = temperature_C,
+    y = depth
+  )) +
+  geom_point(color = "violetred4") +
+  xlab("Temperature [C]") +
+  ylab("Depth") +
+  ggtitle("July Temperatures by Lake Depth")
+
+Julytemp.by.depth
 
 ```
 

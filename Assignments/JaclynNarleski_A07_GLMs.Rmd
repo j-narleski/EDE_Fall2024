@@ -95,7 +95,7 @@ Julytemp.by.depth <- LTER.Lake.July %>%
     y = depth
   )) +
   geom_point(color = "violetred4", size = 1, alpha = 0.75) +
-  geom_smooth(method = "lm", color = "gold3", size = 1.2) +
+  geom_smooth(method = "lm", color = "gold2", size = 1.2) +
   xlab("Temperature [C]") +
   scale_x_continuous(limits = c(0,35), expand = expansion(c(0.05,0.05))) +
   ylab("Depth (m)") +

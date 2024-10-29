@@ -167,20 +167,34 @@ summary(TempRegression)
 ```{r anova.model}
 #12
 
+LTER.anova <- aov(data = LTER.Lake.July, temperature_C ~ lakename)
+summary(LTER.anova)
+
+LTER.linear <- lm(data = LTER.Lake.July, temperature_C ~ lakename)
+summary(LTER.linear)
+
 
 ```
 
 13. Is there a significant difference in mean temperature among the lakes? Report your findings. 
 
-> Answer: 
-
-
+> Answer: Based on the ANOVA test, there is a significant difference in mean temperature among lakes because of the small p-value - it rejects the null hypothesis. However, the linear regression shows that the lakes that really have the most significant differences in mean temperature are East Long Lake, Hummingbird Lake, Paul Lake, Peter Lake, Tuesday Lake, and West Long Lake. While Ward Lake and Crampton Lake still have significant difference, they have higher p-values, so one could argue their differences are less so.
 
 14. Create a graph that depicts temperature by depth, with a separate color for each lake. Add a geom_smooth (method = "lm", se = FALSE) for each lake. Make your points 50 % transparent. Adjust your y axis limits to go from 0 to 35 degrees. Clean up your graph to make it pretty. 
 
 ```{r scatterplot.2}
 #14.
 
+Laketemp.by.depth <- LTER.Lake.July %>%
+  ggplot(aes(
+    x = temperature_C,
+    y = depth,
+    color = lakename)
+  ) + 
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point()
+
+Laketemp.by.depth
 
 ```
 

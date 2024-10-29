@@ -31,6 +31,7 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 library(tidyverse)
 library(agricolae)
 library(lubridate)
+library(corrplot)
 library(here)
 here()
 
@@ -117,14 +118,16 @@ Julytemp.by.depth
 ```{r linear.regression}
 #7
 
+DepthTempRegression <- lm(LTER.Lake.July$temperature_C ~ LTER.Lake.July$depth)
 
+summary(DepthTempRegression)
 ```
 
 
 8. Interpret your model results in words. Include how much of the variability in temperature is explained by changes in depth, the degrees of freedom on which this finding is based, and the statistical significance of the result. Also mention how much temperature is predicted to change for every 1m change in depth. 
 
 > Answer:
-
+The linear regression shows statistical significance between lake temperature and depth, as indicated by the low p-value and t-statistic of 3.835. The R^2 value of 0.7387 suggests that almost 75% of the changes in lake temperature can be correlated with its depth. The high degrees of freedom (9726) also confirms the results and correlation between depth and lake temperature is credible. Finally, for every meter of depth, temperature is predicted to change by about 2 C. 
 
 ---
 
@@ -139,18 +142,22 @@ Let's tackle a similar question from a different approach. Here, we want to expl
 ```{r temperature.model}
 #9
 
+TempAIC <- lm(data = LTER.Lake.July, temperature_C ~ depth + year4 + daynum)
 
+step(TempAIC)
 
 #10
+
+TempRegression <- lm(data = LTER.Lake.July, 
+                     temperature_C ~ year4 + depth)
+summary(TempRegression)
 
 
 ```
 
 11. What is the final set of explanatory variables that the AIC method suggests we use to predict temperature in our multiple regression? How much of the observed variance does this model explain? Is this an improvement over the model using only depth as the explanatory variable?
 
-> Answer: 
-
-
+> Answer:  It seems that depth and year have the best shot at predict temperature using a multiple regression, although not much better than just depth. The model explains about the same amount of observed variance as just using depth
 
 ---
 ## Analysis of Variance

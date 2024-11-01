@@ -1,6 +1,6 @@
 ---
 title: "Assignment 8: Time Series Analysis"
-author: "Student Name"
+author: "Jaclyn Narleski"
 date: "Fall 2024"
 output: pdf_document
 geometry: margin=2.54cm
@@ -28,6 +28,31 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 
 ```{r}
 
+# Load libraries and check working directory
+library(tidyverse)
+library(lubridate)
+library(zoo)
+library(trend)
+library(here)
+here()
+
+# Create ggplot theme
+turqtheme <- theme(
+  panel.background = element_rect(fill = "ivory"),
+  panel.border = element_rect(color = "turquoise4", fill = NA, linetype = 1),
+  plot.title = element_text(hjust = 0.5, size = 12, color = "turquoise4", 
+    face = "bold"),
+  axis.title = element_text(size = 10, color = "turquoise4"),
+  panel.grid.major = element_line(
+    color = "turquoise4", linetype = 2, size = 0.25),
+  panel.grid.minor = element_line(
+    color = "turquoise3", linetype = 3, size = 0.25),
+  axis.text = element_text(color = "turquoise4"),
+  axis.ticks = element_line(color = "turquoise4"),
+  legend.title = element_text(size = 8, color = "turquoise4"),
+  legend.position = "right")
+
+theme_set(turqtheme)
 ```
 
 
@@ -36,6 +61,31 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 ```{r, message = FALSE}
 #1
 
+# Read csvs
+O3.2010 <- read.csv(here(
+  "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2010_raw.csv"))
+O3.2011 <- read.csv(here(
+  "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2011_raw.csv"))
+O3.2012 <- read.csv(here(
+  "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2012_raw.csv"))
+O3.2013 <- read.csv(here(
+   "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2013_raw.csv"))
+O3.2014 <- read.csv(here(
+   "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2014_raw.csv"))
+O3.2015 <- read.csv(here(
+   "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2015_raw.csv"))
+O3.2016 <- read.csv(here( "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2016_raw.csv"))
+O3.2017 <- read.csv(here(
+   "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2017_raw.csv"))
+O3.2018 <- read.csv(here(
+   "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2018_raw.csv"))
+O3.2019 <- read.csv(here(
+   "~/EDE_Fall2024/Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.csv"))
+
+# Combine data frames into one
+OzoneCombined <- 
+  bind_rows(O3.2010, O3.2011, O3.2012, O3.2013, O3.2014, O3.2015, O3.2016, 
+            O3.2017, O3.2018, O3.2019)
 ```
 
 ## Wrangle
@@ -51,12 +101,27 @@ This exercise accompanies the lessons in Environmental Data Analytics on general
 ```{r}
 # 3
 
+# Make date characters into Date class
+OzoneCombined$Date <- as.Date(OzoneCombined$Date, format = "%m/%d/%Y")
+
 # 4
+
+# Wrangle data set using select()
+OzoneCombined.Condensed <- OzoneCombined %>%
+  select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 
 # 5
 
+# Generate data frame of dates by day
+Days <- as.data.frame(seq(as.Date("2010-01-01"), as.Date("2019-12-31"), 
+                          by = "day"))
+# rename column name
+colnames(Days) <- "Date"
+  
 # 6
 
+# Combine Days data frame and ozone data 
+GaringerOzone <- left_join(Days, OzoneCombined.Condensed, by = "Date") 
 
 ```
 

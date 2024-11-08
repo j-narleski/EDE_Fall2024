@@ -1,6 +1,6 @@
 ---
 title: "Assignment 9: Spatial Analysis in R"
-author: "Student Name"
+author: "Jaclyn Narleski"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -29,9 +29,17 @@ This exercise accompanies the lessons in Environmental Data Analytics (ENV872L) 
 ```{r Prepare workspace, error=F, warning=F}
 #1. 
 
+# Import libraries
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(mapview)
+library(here)
 
 #2. 
 
+# Check working directory
+here()
 
 ```
 
@@ -47,19 +55,25 @@ In this exercise, we will be exploring stream gage height data in Nebraska corre
 ```{r Read the county data into an sf dataframe}
 #3. Read in Counties shapefile into an sf dataframe, filtering for just NE counties
 
+NebraskaCounties_sf <- st_read(
+  here("~/EDE_Fall2024/Data/Spatial/cb_2018_us_county_20m.shp")) %>%
+  filter(STATEFP == 31)
 
 #4. Reveal the CRS of the counties features
 
+st_crs(NebraskaCounties_sf)
 
 #5. Plot the data
 
+ggplot(data = NebraskaCounties_sf)+
+  geom_sf()
 
 ```
 
 6.    What is the EPSG code of the Counties dataset? Is this a geographic or a projected coordinate reference system? (Om other words, does this CRS use angular or planar coordinate units?) To what datum is this CRS associated? (Tip: look for the EPSG code on <https://epsg.io>)
 
 > ANSWER: 
-> 
+> The EPSG Code of the dataset is 4269. The NAD83 coordinate system is a geographic coordinate reference system, meaning it uses angular units. This CRS is associated with the North American Datum of 1983. 
 
 
 ### Read in gage locations csv as a dataframe, then display the column names it contains
@@ -73,16 +87,22 @@ Next we'll read in some USGS/NWIS gage location data added to the `Data/Raw` fol
 ```{r Read in USGS Gage Locations}
 #7. Read in gage locations csv as a dataframe
 
+NWISgage <- read.csv(
+  here("~/EDE_Fall2024/Data/Raw/NWIS_SiteInfo_NE_RAW.csv"),
+  colClasses = c("site_no" = "factor", "station_nm"= "factor", 
+                 "site_tp_cd" = "factor", "coord_acy_cd" = "factor",
+                 "dec_coord_datum_cd" = "factor"))
 
 
 #8. Display the structure of the dataframe
 
+glimpse(NWISgage)
 
 ```
 
 9.    What columns in the dataset contain the x and y coordinate values, respectively?  
 > ANSWER:
-> 
+> The columns that contain the x and y coordinate values are dec_lat_va and dec_long_va.
 
 
 ### Convert the dataframe to a spatial features ("sf") dataframe

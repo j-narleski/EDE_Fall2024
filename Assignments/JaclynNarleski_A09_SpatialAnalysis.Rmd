@@ -205,6 +205,21 @@ Now we can examine where the flooding appears most acute by visualizing gage hei
 ```{r map gage sites}
 #1. Map the points, sized by gage height
 
+Flooding_plot <- ggplot() +
+  geom_sf(data = NebraskaCounties_sf) +
+  geom_sf(data = site_no_join, aes(color = gage_ht)) +
+  scale_color_continuous(low = "yellow2", high = "red") +
+  labs(title = "Acute Flooding in Nebraska",
+       subtitle = "Jaclyn Narleski",
+       color = "Gage Height (m)") +
+  theme(
+    plot.title = element_text(color = "darkred", face = "bold", size ="12",
+                              hjust = 0.5),
+    plot.subtitle = element_text(color = "darkred", size = "10", hjust = 0.5),
+    legend.title = element_text(color = "darkred")
+  )
+
+Flooding_plot
 
 ```
 
@@ -223,11 +238,23 @@ Up next we will do some spatial analysis with our data. To prepare for this, we 
 ```{r spatial analysis}
 #20 Transform the counties and gage location datasets to UTM Zone 14
 
-
+NebraskaCounties_sf_utm <- st_transform(NebraskaCounties_sf, crs = 32614)
+Gage_sf_utm <- st_transform(site_no_join, crs = 32614)
 
 #21 Plot the data
 
-
+NWIS_plot_utm <- ggplot() +
+  geom_sf(data = NebraskaCounties_sf_utm, color = "palegreen4")+
+  geom_sf(data = Gage_sf_utm, color = "darkgreen") +
+  labs(title = "NWIS Gage Locations in Nebraska",
+       subtitle = "Jaclyn Narleski") +
+  theme(
+    plot.title = element_text(color = "darkgreen", face = "bold", hjust = 0.5,
+                              size = 12),
+    plot.subtitle = element_text(color = "palegreen4", hjust = 0.5, size = 10)
+  )
+  
+NWIS_plot_utm
 
 ```
 
@@ -248,14 +275,33 @@ Now let's zoom into a particular county and examine the gages located there.
 ```{r spatial selection}
 #22 Select the county
 
+Lancaster_utm <- NebraskaCounties_sf_utm %>%
+  filter(NAME == "Lancaster")
 
 #23 Spatially select gages within the selected county
 
+Lancaster_gagesites <- Gage_sf_utm %>%
+  st_filter(Lancaster_utm, .predicate = st_intersects)
 
-#24 Spatially select gages within 15 k of the selected county
+#24 Spatially select gages within 15 km of the selected county
 
+Lancaster_buffer <- st_buffer(Lancaster_utm, 15000)
+
+Lancaster_gagesites_15 <- Gage_sf_utm %>%
+  st_filter(Lancaster_buffer, .predicate = st_intersects)
+  
 
 #25 Plot
+
+Lancaster_plot <- ggplot() +
+  geom_sf(data = NebraskaCounties_sf_utm) +
+  geom_sf(data = Lancaster_utm, color = "darkblue", fill = "lightyellow2") +
+  geom_sf(data = Lancaster_gagesites, aes(color = "site_no"))+
+  geom_sf(data = Lancaster_gagesites_15, aes(color = "station_nm.x")) +
+  scale_color_manual(values = c("site_no" = "blue", 
+                              "station_nm.x" = "seagreen"))
+
+Lancaster_plot
 
 
 ```

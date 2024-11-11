@@ -281,25 +281,27 @@ Lancaster_utm <- NebraskaCounties_sf_utm %>%
 #23 Spatially select gages within the selected county
 
 Lancaster_gagesites <- Gage_sf_utm %>%
-  st_filter(Lancaster_utm, .predicate = st_intersects)
+  st_filter(Lancaster_utm, .predicate = st_intersects) 
 
 #24 Spatially select gages within 15 km of the selected county
 
 Lancaster_buffer <- st_buffer(Lancaster_utm, 15000)
 
 Lancaster_gagesites_15 <- Gage_sf_utm %>%
-  st_filter(Lancaster_buffer, .predicate = st_intersects)
-  
+  st_filter(Lancaster_buffer)
 
 #25 Plot
 
 Lancaster_plot <- ggplot() +
   geom_sf(data = NebraskaCounties_sf_utm) +
   geom_sf(data = Lancaster_utm, color = "darkblue", fill = "lightyellow2") +
-  geom_sf(data = Lancaster_gagesites, aes(color = "site_no"))+
-  geom_sf(data = Lancaster_gagesites_15, aes(color = "station_nm.x")) +
-  scale_color_manual(values = c("site_no" = "blue", 
-                              "station_nm.x" = "seagreen"))
+  geom_sf(data = Lancaster_gagesites, 
+          aes(color = "Gage Sites in Lancaster County"))+
+  geom_sf(data = Lancaster_gagesites_15, 
+          aes(color = "Gage Sites within 15 km of Lancaster County")) +
+  scale_color_manual(
+    values = c("Gage Sites in Lancaster County" = "blue",
+               "Gage Sites within 15 km in Lancaster County" = "green"))
 
 Lancaster_plot
 

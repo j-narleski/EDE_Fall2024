@@ -1,8 +1,10 @@
 ---
-title: "Assignment 9: Spatial Analysis in R"
+title: 'Assignment 9: Spatial Analysis in R'
 author: "Jaclyn Narleski"
-output: html_document
-editor_options: 
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -91,7 +93,7 @@ NWISgage <- read.csv(
   here("~/EDE_Fall2024/Data/Raw/NWIS_SiteInfo_NE_RAW.csv"),
   colClasses = c("site_no" = "factor", "station_nm"= "factor", 
                  "site_tp_cd" = "factor", "coord_acy_cd" = "factor",
-                 "dec_coord_datum_cd" = "factor"))
+                 "dec_coord_datum_cd" = "factor")) # Change fields to factors
 
 
 #8. Display the structure of the dataframe
@@ -272,7 +274,7 @@ Now let's zoom into a particular county and examine the gages located there.
  * and the gage sites within 15 km of the county
 
 
-```{r spatial selection}
+```{r spatial selection, warning=FALSE}
 #22 Select the county
 
 Lancaster_utm <- NebraskaCounties_sf_utm %>%
@@ -285,25 +287,37 @@ Lancaster_gagesites <- Gage_sf_utm %>%
 
 #24 Spatially select gages within 15 km of the selected county
 
+# Set 15 km buffer
 Lancaster_buffer <- st_buffer(Lancaster_utm, 15000)
 
+# Filter data to find points in buffer
 Lancaster_gagesites_15 <- Gage_sf_utm %>%
-  st_filter(Lancaster_buffer)
+  st_intersection(Lancaster_buffer)
 
 #25 Plot
 
 Lancaster_plot <- ggplot() +
   geom_sf(data = NebraskaCounties_sf_utm) +
-  geom_sf(data = Lancaster_utm, color = "darkblue", fill = "lightyellow2") +
-  geom_sf(data = Lancaster_gagesites, 
-          aes(color = "Gage Sites in Lancaster County"))+
+  geom_sf(data = Lancaster_utm, 
+          aes(color = "Lancaster County"),
+              color = "darkblue", fill = "lightyellow2") +
   geom_sf(data = Lancaster_gagesites_15, 
-          aes(color = "Gage Sites within 15 km of Lancaster County")) +
+          aes(color = "Gage Sites within 15 km of Lancaster County"))+
+  geom_sf(data = Lancaster_gagesites, 
+          aes(color = "Gage Sites in Lancaster County")) +
   scale_color_manual(
-    values = c("Gage Sites in Lancaster County" = "blue",
-               "Gage Sites within 15 km in Lancaster County" = "green"))
+    values = c("Gage Sites within 15 km of Lancaster County" = "blue",
+               "Gage Sites in Lancaster County" = "green"),
+    name = "Gage Sites") +
+  labs(title = "Gage Sites in & around Lancaster County",
+       subtitle = "Jaclyn Narleski") +
+  theme(
+    plot.title = element_text(size = 12, face = "bold", color = "darkgreen",
+                              hjust = 0.5),
+    plot.subtitle = element_text(size = 10, color = "palegreen4",
+                                 hjust = 0.5),
+    legend.position = "bottom"
+  )
 
 Lancaster_plot
-
-
 ```

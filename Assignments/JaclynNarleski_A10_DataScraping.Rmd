@@ -38,6 +38,17 @@ library(here)
 # Check working directory
 here()
 
+# Create personal theme
+water_theme <- theme(
+  plot.title = element_text(color = "darkblue", face = "bold", hjust = 0.5),
+  axis.title.x = element_text(color = "darkblue"),
+  axis.title.y = element_text(color = "darkblue", angle = 90, hjust = 0.5),
+  panel.background = element_rect(fill = "lightblue1")
+)
+
+# Set my theme
+theme_set(water_theme)
+
 ```
 
 2. We will be scraping data from the NC DEQs Local Water Supply Planning website, specifically the Durham's 2023 Municipal Local Water Supply Plan (LWSP): 
@@ -72,6 +83,7 @@ In the code chunk below scrape these values, assigning them to four separate var
 ```{r scrape.the.data}
 #3 
 
+# Scrape data using nodes
 WaterSystem <- LWSP %>% 
   html_nodes('div+ table tr:nth-child(1) td:nth-child(2)') %>% 
   html_text()
@@ -82,6 +94,7 @@ Ownership <- LWSP %>%
   html_nodes('div+ table tr:nth-child(2) td:nth-child(4)') %>%
   html_text()
 
+# Read whole MGD table sections
 MGD <- LWSP %>% 
   html_nodes('th~ td+ td') %>%
   html_text()
@@ -98,12 +111,20 @@ MGD <- LWSP %>%
 ```{r create.a.dataframe.from.scraped.data}
 #4 
 
+# Set month vector in order of months from left to right on website
 Month <- c("Jan", "May", "Sep", "Feb", "Jun", "Oct", 
            "Mar", "Jul", "Nov", "Apr", "Aug", "Dec")
+
+# Repeat year for lenght of months
 Year <- rep(2023, length(Month))
+
+# Paste year and month with 1st day of month
 Date <- paste0(Year, Month, "1")
+
+# Format into date object
 Date <- as.Date(Date, format = "%Y %b %d")
 
+# Generate data frame
 DurhamWater <- data.frame(
   "Date" = Date,
   "Water System" = WaterSystem,
@@ -114,6 +135,7 @@ DurhamWater <- data.frame(
 
 #5 
 
+# Create ggplot
 DurhamWaterPlot <- DurhamWater %>%
   ggplot(aes(
     x = Date,
@@ -123,10 +145,8 @@ DurhamWaterPlot <- DurhamWater %>%
   ggtitle("Maximum Daily Water Use") +
   ylab("Maximum Daily Use") 
 
+# View plot
 DurhamWaterPlot
-
-
-
 ```
 
 6. Note that the PWSID and the year appear in the web address for the page we scraped. Construct a function using your code above that can scrape data for any PWSID and year for which the NC DEQ has data, returning a dataframe.
@@ -135,12 +155,14 @@ DurhamWaterPlot
 ```{r construct.a.scraping.function}
 #6. 
 
+# Scrape it function
 scrape.it <- function(PWSID, Year){
   the_url <- paste0(
     "https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=",
-    PWSID,"&year=",Year)
-  the_website <- read_html(the_url)
-  
+    PWSID,"&year=",Year) # Paste PWSID and Year inputs into URL
+  the_website <- read_html(the_url) # Read url
+
+# Scrape nodes    
 WaterSystem <- the_website %>% 
   html_nodes('div+ table tr:nth-child(1) td:nth-child(2)') %>% 
   html_text()
@@ -152,12 +174,14 @@ MGD <- the_website %>%
   html_nodes('th~ td+ td') %>%
   html_text()
 
+# Set month vector, repeat year for length of months, and set to date object
 Month <- c("Jan", "May", "Sep", "Feb", "Jun", "Oct", 
            "Mar", "Jul", "Nov", "Apr", "Aug", "Dec")
 Year1 <- rep(Year, length(Month))
 Date <- paste0(Year1, Month, "1")
 Date <- as.Date(Date, format = "%Y %b %d")
 
+# Generate data frame
 water_data <- data.frame(
   "Date" = Date,
   "Water System" = WaterSystem,
@@ -170,9 +194,6 @@ return(water_data)
 
 }
 
-
-
-
 ```
 
 7. Use the function above to extract and plot max daily withdrawals for Durham (PWSID='03-32-010') for each month in 2015
@@ -180,17 +201,20 @@ return(water_data)
 ```{r fetch.and.plot.Durham.2015.data}
 #7 
 
+# Scrape 2015 data
 DurhamWater2015 <- scrape.it('03-32-010',2015)
 
+# Plot data
 DurhamWater2015plot <- DurhamWater2015 %>%
   ggplot(aes(
     x = Date,
     y = Max.Day.Use
   )) +
   geom_line() +
-  ggtitle("Maximum Daily Water Use") +
+  ggtitle("Maximum Daily Water Use (Durham, 2015)") +
   ylab("Maximum Daily Use") 
 
+# View plot
 DurhamWater2015plot
 
 ```
@@ -200,10 +224,13 @@ DurhamWater2015plot
 ```{r fetch.and.plot.Asheville.2015.data}
 #8 
 
+# Scrape 2015 Asheville data
 AshevilleWater2015 <- scrape.it('01-11-010', 2015)
 
+# Combine data into one data frame 
 CombinedData <- rbind(DurhamWater2015, AshevilleWater2015)
 
+# Generate plot
 Asheville_Durham_Compare <- CombinedData %>%
   ggplot(aes(
     x = Date,
@@ -211,9 +238,11 @@ Asheville_Durham_Compare <- CombinedData %>%
     color = Water.System
   )) +
   geom_line() +
-  ggtitle("Maximum Daily Water Use") +
-  ylab("Maximum Daily Use") 
+  ggtitle("Maximum Daily Water Use (2015)") +
+  ylab("Maximum Daily Use") +
+  labs(color = "City Water System")
 
+# View plot
 Asheville_Durham_Compare
 
 ```
@@ -226,9 +255,31 @@ Asheville_Durham_Compare
 ```{r fetch.and.plot.Asheville.multiyear.data }
 #9 
 
+# Set object for multi-year vector 
+Multiyears <- seq(2018,2022)
+
+# Use map2 to run over scrape it function with 2 inputs
+AshevilleWater_18_22 <- map2(
+  rep('01-11-010', length(Multiyears)), Multiyears, scrape.it) %>%
+  bind_rows()
+
+# Generate plot
+Asheville_multi <- AshevilleWater_18_22 %>%
+  ggplot(aes(
+    x = Date,
+    y = Max.Day.Use)
+  ) +
+  geom_line() +
+  geom_smooth(method = 'loess') +
+  scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+  ggtitle("Maximum Daily Water Use (2018-2022)") +
+  ylab("Maximum Daily Use") 
+
+# View plot
+Asheville_multi
 
 ```
 
 Question: Just by looking at the plot (i.e. not running statistics), does Asheville have a trend in water usage over time?
-> Answer:
+> Answer: Overall, based off the geom_smooth line, Asheville does display an upward trend in water usage oer time.
 >

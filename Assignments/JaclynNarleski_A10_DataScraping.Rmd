@@ -121,7 +121,7 @@ DurhamWaterPlot <- DurhamWater %>%
   ) +
   geom_line() +
   ggtitle("Maximum Daily Water Use") +
-  ylab("Maximum Daily Use")
+  ylab("Maximum Daily Use") 
 
 DurhamWaterPlot
 
@@ -134,6 +134,41 @@ DurhamWaterPlot
 
 ```{r construct.a.scraping.function}
 #6. 
+
+scrape.it <- function(PWSID, Year){
+  the_url <- paste0(
+    "https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=", 
+    PWSID, "&year=", Year)
+  the_website <- read_html(the_url)
+  
+  WaterSystem <- the_website %>% 
+  html_nodes('div+ table tr:nth-child(1) td:nth-child(2)') %>% 
+  html_text()
+PWSID_scraped <- the_website %>% 
+  html_nodes('td tr:nth-child(1) td:nth-child(5)') %>%
+  html_text()
+Ownership <- the_website %>%
+  html_nodes('div+ table tr:nth-child(2) td:nth-child(4)') %>%
+  html_text()
+
+MGD <- the_website %>% 
+  html_nodes('th~ td+ td') %>%
+  html_text()
+
+MGD <- as.numeric(MGD)
+
+water_data <- data.frame(
+    "Water System" = WaterSystem,
+    "PWSID" = PWSID_scraped,
+    "Ownership" = Ownership,
+    "Maximum Daily Use" = MGD
+)
+
+return(water_data)
+
+}
+
+
 
 
 ```

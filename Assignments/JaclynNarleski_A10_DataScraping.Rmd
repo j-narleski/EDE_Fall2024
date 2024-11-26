@@ -137,31 +137,33 @@ DurhamWaterPlot
 
 scrape.it <- function(PWSID, Year){
   the_url <- paste0(
-    "https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=", 
-    PWSID, "&year=", Year)
+    "https://www.ncwater.org/WUDC/app/LWSP/report.php?pwsid=",
+    PWSID,"&year=",Year)
   the_website <- read_html(the_url)
   
-  WaterSystem <- the_website %>% 
+WaterSystem <- the_website %>% 
   html_nodes('div+ table tr:nth-child(1) td:nth-child(2)') %>% 
   html_text()
-PWSID_scraped <- the_website %>% 
-  html_nodes('td tr:nth-child(1) td:nth-child(5)') %>%
-  html_text()
+PWSID_scraped <- rep(PWSID, length(WaterSystem))
 Ownership <- the_website %>%
   html_nodes('div+ table tr:nth-child(2) td:nth-child(4)') %>%
   html_text()
-
 MGD <- the_website %>% 
   html_nodes('th~ td+ td') %>%
   html_text()
 
-MGD <- as.numeric(MGD)
+Month <- c("Jan", "May", "Sep", "Feb", "Jun", "Oct", 
+           "Mar", "Jul", "Nov", "Apr", "Aug", "Dec")
+Year1 <- rep(Year, length(Month))
+Date <- paste0(Year1, Month, "1")
+Date <- as.Date(Date, format = "%Y %b %d")
 
 water_data <- data.frame(
-    "Water System" = WaterSystem,
-    "PWSID" = PWSID_scraped,
-    "Ownership" = Ownership,
-    "Maximum Daily Use" = MGD
+  "Date" = Date,
+  "Water System" = WaterSystem,
+  "PWSID" = PWSID_scraped,
+  "Ownership" = Ownership,
+  "Max Day Use" = as.numeric(MGD)
 )
 
 return(water_data)
@@ -178,6 +180,18 @@ return(water_data)
 ```{r fetch.and.plot.Durham.2015.data}
 #7 
 
+DurhamWater2015 <- scrape.it('03-32-010',2015)
+
+DurhamWater2015plot <- DurhamWater2015 %>%
+  ggplot(aes(
+    x = Date,
+    y = Max.Day.Use
+  )) +
+  geom_line() +
+  ggtitle("Maximum Daily Water Use") +
+  ylab("Maximum Daily Use") 
+
+DurhamWater2015plot
 
 ```
 
@@ -186,6 +200,21 @@ return(water_data)
 ```{r fetch.and.plot.Asheville.2015.data}
 #8 
 
+AshevilleWater2015 <- scrape.it('01-11-010', 2015)
+
+CombinedData <- rbind(DurhamWater2015, AshevilleWater2015)
+
+Asheville_Durham_Compare <- CombinedData %>%
+  ggplot(aes(
+    x = Date,
+    y = Max.Day.Use,
+    color = Water.System
+  )) +
+  geom_line() +
+  ggtitle("Maximum Daily Water Use") +
+  ylab("Maximum Daily Use") 
+
+Asheville_Durham_Compare
 
 ```
 
